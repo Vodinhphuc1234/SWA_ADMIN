@@ -8,7 +8,7 @@ const user = undefined;
 const Account = () => (
   <>
     <Head>
-      <title>Account | Material Kit</title>
+      <title>Account</title>
     </Head>
     <Box
       component="main"
