@@ -1,9 +1,8 @@
 import Head from "next/head";
 import { Box, Container } from "@mui/material";
-import { CustomerListResults } from "../components/customer/customer-list-results";
-import { CustomerListToolbar } from "../components/customer/customer-list-toolbar";
-import { DashboardLayout } from "../components/dashboard-layout";
-// import { customers } from "../__mocks__/customers";
+import { CustomerListResults } from "src/components/customer/customer-list-results";
+import { CustomerListToolbar } from "src/components/customer/customer-list-toolbar";
+import { DashboardLayout } from "src/components/dashboard-layout";
 import getAllUsers from "src/api/getAllUser";
 
 const Customers = ({ customers }) => (

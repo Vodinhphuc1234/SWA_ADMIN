@@ -5,8 +5,6 @@ import { getUser } from "src/api/getUser";
 import { AccountProfile } from "src/components/account/account-profile";
 import { AccountProfileDetails } from "src/components/account/account-profile-details";
 import { DashboardLayout } from "src/components/dashboard-layout";
-import { LatestOrders } from "src/components/dashboard/latest-trips";
-import { LatestProducts } from "src/components/dashboard/latest-products";
 
 const CustomerDetail = ({ customer }) => {
   return (
@@ -34,12 +32,6 @@ const CustomerDetail = ({ customer }) => {
             </Grid>
             <Grid item lg={12} mt={10}>
               <Divider />
-            </Grid>
-            <Grid item lg={4} md={6} xl={3} xs={12}>
-              <LatestProducts sx={{ height: "100%" }} />
-            </Grid>
-            <Grid item lg={8} md={12} xl={9} xs={12}>
-              <LatestOrders />
             </Grid>
           </Grid>
         </Container>
