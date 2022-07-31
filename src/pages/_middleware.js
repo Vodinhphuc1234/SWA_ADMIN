@@ -6,9 +6,9 @@ export default function middleware(req) {
     if (token) {
       return NextResponse.next();
     }
-    return NextResponse.redirect("/login");
+    return NextResponse.redirect("https://swa-admin.vercel.app//login");
   } else if (req.cookies.token) {
-    return NextResponse.redirect("/");
+    return NextResponse.redirect("https://swa-admin.vercel.app");
   }
   return NextResponse.next();
 }
