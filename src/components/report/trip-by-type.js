@@ -3,8 +3,9 @@ import { Box, Card, CardContent, CardHeader, Divider, Typography, useTheme } fro
 import LaptopMacIcon from '@mui/icons-material/LaptopMac';
 import PhoneIcon from '@mui/icons-material/Phone';
 import TabletIcon from '@mui/icons-material/Tablet';
+import { DirectionsBus, DirectionsCar, LocalCarWash } from '@mui/icons-material';
 
-export const TrafficByDevice = (props) => {
+export const TripsByType = (props) => {
   const theme = useTheme();
 
   const data = {
@@ -17,7 +18,7 @@ export const TrafficByDevice = (props) => {
         hoverBorderColor: '#FFFFFF'
       }
     ],
-    labels: ['Desktop', 'Tablet', 'Mobile']
+    labels: ['4 seats', '7 seats', '10 seats']
   };
 
   const options = {
@@ -44,21 +45,21 @@ export const TrafficByDevice = (props) => {
 
   const devices = [
     {
-      title: 'Desktop',
+      title: '4 seats',
       value: 63,
-      icon: LaptopMacIcon,
+      icon: DirectionsCar,
       color: '#3F51B5'
     },
     {
-      title: 'Tablet',
+      title: '7 seats',
       value: 15,
-      icon: TabletIcon,
+      icon: LocalCarWash,
       color: '#E53935'
     },
     {
-      title: 'Mobile',
+      title: '10 seats',
       value: 23,
-      icon: PhoneIcon,
+      icon: DirectionsBus,
       color: '#FB8C00'
     }
   ];

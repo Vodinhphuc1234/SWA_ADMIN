@@ -1,105 +1,115 @@
-import Head from 'next/head';
-import { Box, Container, Grid } from '@mui/material';
-import { Budget } from '../components/dashboard/budget';
-import { LatestOrders } from '../components/dashboard/latest-orders';
-import { LatestProducts } from '../components/dashboard/latest-products';
-import { Sales } from '../components/dashboard/sales';
-import { TasksProgress } from '../components/dashboard/tasks-progress';
-import { TotalCustomers } from '../components/dashboard/total-customers';
-import { TotalProfit } from '../components/dashboard/total-profit';
-import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
-import { DashboardLayout } from '../components/dashboard-layout';
+import { ArrowDownward, ArrowUpward, CarRental, DriveEtaRounded, Money, People } from "@mui/icons-material";
+import { Box, Container, Grid, Typography } from "@mui/material";
+import Head from "next/head";
+import { CustomizedBox } from "src/components/dashboard/customizedBox";
+import { StatisticChart } from "src/components/report/StatictisChart";
+import { DashboardLayout } from "src/components/dashboard-layout";
+import { LatestTrips } from "src/components/dashboard/latest-trips";
+import { BestDrivers } from "src/components/dashboard/best-driver";
+import { TripsByType } from "src/components/report/trip-by-type";
+import { TripsByAreaChart } from "src/components/report/tripsByAreaChart";
 
 const Dashboard = () => (
   <>
     <Head>
-      <title>
-        Dashboard | Material Kit
-      </title>
+      <title>Dashboard | Material Kit</title>
     </Head>
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8
+        py: 8,
       }}
     >
       <Container maxWidth={false}>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            item
-            lg={3}
-            sm={6}
-            xl={3}
-            xs={12}
-          >
-            <Budget />
+        <Grid container spacing={3}>
+          <Grid item lg={3} sm={6} xl={3} xs={12}>
+            <CustomizedBox title={"BUDGET"} value={"$24k"} icon={<Money />} iconColor="error.main">
+              <>
+                <ArrowDownward color="error" />
+                <Typography
+                  color="error"
+                  sx={{
+                    mr: 1,
+                  }}
+                  variant="body2"
+                >
+                  12%
+                </Typography>
+                <Typography color="textSecondary" variant="caption">
+                  Since last month
+                </Typography>
+              </>
+            </CustomizedBox>
           </Grid>
-          <Grid
-            item
-            xl={3}
-            lg={3}
-            sm={6}
-            xs={12}
-          >
-            <TotalCustomers />
+          <Grid item xl={3} lg={3} sm={6} xs={12}>
+            <CustomizedBox title={"TOTAL CUSTOMER"} value={"1.6K"} icon={<People />} iconColor="warning.main">
+              <>
+                <ArrowUpward color="success" />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mr: 1,
+                  }}
+                >
+                  16%
+                </Typography>
+                <Typography color="textSecondary" variant="caption">
+                  Since last month
+                </Typography>
+              </>
+            </CustomizedBox>
           </Grid>
-          <Grid
-            item
-            xl={3}
-            lg={3}
-            sm={6}
-            xs={12}
-          >
-            <TasksProgress />
+          <Grid item xl={3} lg={3} sm={6} xs={12}>
+            <CustomizedBox title={"TOTAL DRIVER"} value={"1.6K"} icon={<DriveEtaRounded />} iconColor="success.main">
+              <>
+                <ArrowUpward color="success" />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mr: 1,
+                  }}
+                >
+                  16%
+                </Typography>
+                <Typography color="textSecondary" variant="caption">
+                  Since last month
+                </Typography>
+              </>
+            </CustomizedBox>
           </Grid>
-          <Grid
-            item
-            xl={3}
-            lg={3}
-            sm={6}
-            xs={12}
-          >
-            <TotalProfit sx={{ height: '100%' }} />
+          <Grid item xl={3} lg={3} sm={6} xs={12}>
+            <CustomizedBox title={"TOTAL TRIP"} value={"1.6K"} icon={<CarRental />} iconColor="primary.main">
+              <>
+                <ArrowUpward color="success" />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mr: 1,
+                  }}
+                >
+                  16%
+                </Typography>
+                <Typography color="textSecondary" variant="caption">
+                  Since last month
+                </Typography>
+              </>
+            </CustomizedBox>
           </Grid>
-          <Grid
-            item
-            lg={8}
-            md={12}
-            xl={9}
-            xs={12}
-          >
-            <Sales />
+          <Grid item lg={12} md={12} xl={12} xs={12}>
+            <TripsByAreaChart />
           </Grid>
-          <Grid
-            item
-            lg={4}
-            md={6}
-            xl={3}
-            xs={12}
-          >
-            <TrafficByDevice sx={{ height: '100%' }} />
+          <Grid item lg={12} md={12} xl={12} xs={12}>
+            <StatisticChart />
           </Grid>
-          <Grid
-            item
-            lg={4}
-            md={6}
-            xl={3}
-            xs={12}
-          >
-            <LatestProducts sx={{ height: '100%' }} />
+          <Grid item lg={12} md={12} xl={12} xs={12}>
+            <TripsByType sx={{ height: "100%" }} />
           </Grid>
-          <Grid
-            item
-            lg={8}
-            md={12}
-            xl={9}
-            xs={12}
-          >
-            <LatestOrders />
+          <Grid item lg={4} md={6} xl={3} xs={12}>
+            <BestDrivers sx={{ height: "100%" }} />
+          </Grid>
+          <Grid item lg={8} md={12} xl={9} xs={12}>
+            <LatestTrips />
           </Grid>
         </Grid>
       </Container>
@@ -107,10 +117,6 @@ const Dashboard = () => (
   </>
 );
 
-Dashboard.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Dashboard.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Dashboard;

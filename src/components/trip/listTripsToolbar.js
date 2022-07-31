@@ -1,18 +1,11 @@
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  InputAdornment,
-  SvgIcon,
-  Typography,
+  Box, Card,
+  CardContent, InputAdornment,
+  SvgIcon, TextField, Typography
 } from "@mui/material";
-import { Download as DownloadIcon } from "../../icons/download";
 import { Search as SearchIcon } from "../../icons/search";
-import { Upload as UploadIcon } from "../../icons/upload";
 
-export const ProductListToolbar = (props) => (
+export const ListTripToolbar = (props) => (
   <Box {...props}>
     <Box
       sx={{
@@ -26,17 +19,6 @@ export const ProductListToolbar = (props) => (
       <Typography sx={{ m: 1 }} variant="h4">
         Trips
       </Typography>
-      <Box sx={{ m: 1 }}>
-        <Button startIcon={<UploadIcon fontSize="small" />} sx={{ mr: 1 }}>
-          Import
-        </Button>
-        <Button startIcon={<DownloadIcon fontSize="small" />} sx={{ mr: 1 }}>
-          Export
-        </Button>
-        <Button color="primary" variant="contained">
-          Add Trips
-        </Button>
-      </Box>
     </Box>
     <Box sx={{ mt: 3 }}>
       <Card>
@@ -47,7 +29,7 @@ export const ProductListToolbar = (props) => (
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SvgIcon fontSize="small" color="action">
+                    <SvgIcon color="action" fontSize="small">
                       <SearchIcon />
                     </SvgIcon>
                   </InputAdornment>

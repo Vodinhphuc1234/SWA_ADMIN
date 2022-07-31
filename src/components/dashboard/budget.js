@@ -31,7 +31,7 @@ export const Budget = (props) => (
         <Grid item>
           <Avatar
             sx={{
-              backgroundColor: 'error.main',
+              backgroundColor: 'red',
               height: 56,
               width: 56
             }}
