@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 
 export const AccountProfile = ({ user, ...rest }) => {
-  console.log(user);
   return (
     <Card {...rest}>
       <CardContent>
