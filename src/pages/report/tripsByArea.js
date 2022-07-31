@@ -47,8 +47,8 @@ const TripByAreaReport = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {amountTripByProvince.map((item) => (
-                  <TableRow>
+                {amountTripByProvince.map((item, i) => (
+                  <TableRow key={i}>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.amount}</TableCell>
                   </TableRow>

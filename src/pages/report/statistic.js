@@ -76,8 +76,8 @@ const StatisticReport = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {statistics.map((item) => (
-                <TableRow>
+              {statistics.map((item, i) => (
+                <TableRow key={i}>
                   <TableCell>{item.time}</TableCell>
                   <TableCell>{item.budget}</TableCell>
                   <TableCell>{item.tripTotal}</TableCell>
