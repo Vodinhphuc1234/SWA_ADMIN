@@ -10,7 +10,7 @@ const CustomerDetail = ({ customer }) => {
   return (
     <>
       <Head>
-        <title>Customer detail</title>
+        <title>Customer</title>
       </Head>
       <Box
         component="main"
