@@ -6,9 +6,9 @@ export default function middleware(req) {
     if (token) {
       return NextResponse.next();
     }
-    return NextResponse.redirect("http://localhost:3000/login");
+    return NextResponse.redirect("/login");
   } else if (req.cookies.token) {
-    return NextResponse.redirect("http://localhost:3000");
+    return NextResponse.redirect("/");
   }
   return NextResponse.next();
 }
