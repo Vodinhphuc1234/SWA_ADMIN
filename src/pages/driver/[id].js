@@ -21,20 +21,31 @@ const DriverDetail = ({ driver }) => {
         }}
       >
         <Container maxWidth={false}>
-          <Typography sx={{ mb: 3 }} variant="h4">
-            Account
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item lg={4} md={6} xs={12}>
-              <AccountProfile user={driver} />
-            </Grid>
-            <Grid item lg={8} md={6} xs={12}>
-              <AccountProfileDetails user={driver} />
-            </Grid>
-            <Grid item lg={12} mt={10}>
-              <DriverIncome />
-            </Grid>
-          </Grid>
+          {driver && (
+            <>
+              <Typography sx={{ mb: 3 }} variant="h4">
+                Account
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item lg={4} md={6} xs={12}>
+                  <AccountProfile user={driver} />
+                </Grid>
+                <Grid item lg={8} md={6} xs={12}>
+                  <AccountProfileDetails user={driver} />
+                </Grid>
+                <Grid item lg={12} mt={10}>
+                  <DriverIncome />
+                </Grid>
+              </Grid>
+            </>
+          )}
+          {!driver && (
+            <>
+              <Typography sx={{ mb: 3 }} variant="h4" textAlign="center">
+                No account available
+              </Typography>
+            </>
+          )}
         </Container>
       </Box>
     </>
