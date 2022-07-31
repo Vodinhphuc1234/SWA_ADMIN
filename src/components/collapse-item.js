@@ -1,4 +1,4 @@
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import { NavItem } from "./nav-item";
 
 const { Inbox, ExpandLess, ExpandMore } = require("@mui/icons-material");

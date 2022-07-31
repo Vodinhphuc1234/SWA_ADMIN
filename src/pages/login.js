@@ -7,7 +7,7 @@ import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Facebook as FacebookIcon } from "../icons/facebook";
 import { Google as GoogleIcon } from "../icons/google";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import { setCookies } from "cookies-next";
 
 const Login = () => {
