@@ -24,13 +24,13 @@ const Login = () => {
       password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: () => {
-      router.push("/");
+      window.location.href = "/";
     },
   });
 
   const handleSubmit = () => {
     setCookies("token", "authentication", { maxAge: 3000 });
-    router.push("/");
+    window.location.href = "/";
   };
 
   return (
