@@ -9,61 +9,99 @@ import {
   CardContent,
   CardHeader,
   Divider,
-  FormControl, Grid, IconButton, TextField,
-  useTheme
+  FormControl,
+  Grid,
+  IconButton,
+  TextField,
+  useTheme,
 } from "@mui/material";
+import { removeCookies } from "cookies-next";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import getTripReportByArea from "src/api/report/getTripReportByArea";
 
-export const TripsByAreaChart = (props) => {
+const colors = [
+  "#B54040",
+  "#B54086",
+  "#4840B5",
+  "#40B5A1",
+  "#48B540",
+  "#B5B540",
+  "#B56340",
+  "#000000",
+  "#9C7E71",
+  "#819C71",
+];
+
+export const TripsByAreaChart = ({ setDateFromTable, setDateToTable, ...rest }) => {
   const theme = useTheme();
 
-  const data = {
-    datasets: [
-      {
-        backgroundColor: "#3F51B5",
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [18, 5, 19, 27, 29, 19, 20],
-        label: "HCM city",
-        maxBarThickness: 10,
-      },
-      {
-        backgroundColor: "#EEEEEE",
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [11, 20, 12, 29, 30, 25, 13],
-        label: "HN city",
-        maxBarThickness: 10,
-      },
-      {
-        backgroundColor: "green",
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [18, 5, 19, 27, 29, 19, 20],
-        label: "Key city",
-        maxBarThickness: 10,
-      },
-      {
-        backgroundColor: "darkred",
-        barPercentage: 0.5,
-        barThickness: 12,
-        borderRadius: 4,
-        categoryPercentage: 0.5,
-        data: [11, 20, 12, 29, 30, 25, 13],
-        label: "Others",
-        maxBarThickness: 10,
-      },
-    ],
-    labels: ["1 Aug", "2 Aug", "3 Aug", "4 Aug", "5 Aug", "6 Aug", "7 aug"],
-  };
+  const router = useRouter();
+
+  const [data, setData] = useState({ datasets: [], labels: [] });
+
+  const [dateFrom, setDateFrom] = useState(
+    new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+  );
+  const [dateTo, setDateTo] = useState(new Date());
+
+  useEffect(() => {
+    const asyncFunc = async () => {
+      const data = await getTripReportByArea({
+        params: {
+          offset: 0,
+          limit: 500,
+          date_start: dateFrom.getTime() / 1000,
+          date_end: dateTo.getTime() / 1000,
+        },
+      });
+      console.log(data);
+
+      if (data?.status === 403 || data?.status === 401) {
+        removeCookies("token");
+        router.push("/login");
+      } else {
+        //convert data
+        const convertedData = { dates: [], datasets: [] };
+        var dataFollowRegion = {};
+
+        //get data
+        data.forEach((item) => {
+          if (!convertedData.dates.includes(item.date)) convertedData.dates.push(item.date);
+          if (dataFollowRegion[item.region]) {
+            dataFollowRegion[item.region].push(item.trips_count);
+          } else {
+            dataFollowRegion[item.region] = [];
+            dataFollowRegion[item.region].push(item.trips_count);
+          }
+        });
+
+        //get regions
+        var regions = Object.keys(dataFollowRegion);
+        regions.forEach((region) => {
+          convertedData.datasets.push({
+            backgroundColor: colors[Math.floor(Math.random() * 9)],
+            barPercentage: 0.5,
+            barThickness: 12,
+            borderRadius: 4,
+            categoryPercentage: 0.5,
+            data: [...dataFollowRegion[region]],
+            label: region,
+            maxBarThickness: 10,
+          });
+        });
+
+        setData({
+          datasets: [...convertedData.datasets],
+          labels: [...convertedData.dates],
+        });
+      }
+    };
+
+    asyncFunc();
+  }, [dateFrom, dateTo]);
 
   const options = {
     animation: false,
@@ -113,11 +151,9 @@ export const TripsByAreaChart = (props) => {
       titleFontColor: theme.palette.text.primary,
     },
   };
-  const [dateFrom, setDateFrom] = useState(new Date(new Date().getTime() - 7*24*60*60*1000));
-  const [dateTo, setDateTo] = useState(new Date());
 
   return (
-    <Card {...props}>
+    <Card {...rest}>
       <CardHeader
         action={
           <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -128,8 +164,9 @@ export const TripsByAreaChart = (props) => {
                     label="From"
                     value={dateFrom}
                     onChange={(newValue) => {
-                      console.log(newValue)
+                      console.log(newValue);
                       setDateFrom(newValue);
+                      if (setDateFromTable) setDateFromTable(newValue);
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -143,7 +180,7 @@ export const TripsByAreaChart = (props) => {
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <ArrowRightIcon fontSize="large" sx={{color: "gray"}} />
+                  <ArrowRightIcon fontSize="large" sx={{ color: "gray" }} />
                 </Grid>
                 <Grid item lg={5} md={5} xs={5}>
                   <DatePicker
@@ -151,6 +188,7 @@ export const TripsByAreaChart = (props) => {
                     value={dateTo}
                     onChange={(newValue) => {
                       setDateTo(newValue);
+                      if (setDateToTable) setDateToTable(newValue);
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -165,8 +203,7 @@ export const TripsByAreaChart = (props) => {
                   alignItems="center"
                 >
                   <IconButton>
-
-                  <Sort fontSize="large" sx={{color: "gray"}} />
+                    <Sort fontSize="large" sx={{ color: "gray" }} />
                   </IconButton>
                 </Grid>
               </Grid>
@@ -195,9 +232,9 @@ export const TripsByAreaChart = (props) => {
         }}
       >
         <Link href="/report/tripsByArea">
-        <Button color="primary" endIcon={<ArrowRightIcon fontSize="small" />} size="small">
-          Overview
-        </Button>
+          <Button color="primary" endIcon={<ArrowRightIcon fontSize="small" />} size="small">
+            Overview
+          </Button>
         </Link>
       </Box>
     </Card>

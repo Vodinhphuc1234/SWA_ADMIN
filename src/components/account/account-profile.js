@@ -29,13 +29,10 @@ export const AccountProfile = ({ user, ...rest }) => {
             }}
           />
           <Typography color="textPrimary" gutterBottom variant="h5">
-            {user.name}
+            {user.first_name} {user.last_name}
           </Typography>
           <Typography color="textSecondary" variant="body2">
-            {`${user.address.suite} ${user.address.street} ${user.address.city}`}
-          </Typography>
-          <Typography color="textSecondary" variant="body2">
-            {user.address.zipcode}
+            {user.date_joined}
           </Typography>
         </Box>
       </CardContent>

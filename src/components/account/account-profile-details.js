@@ -1,23 +1,19 @@
+import { LoadingButton } from "@mui/lab";
+import { Box, Card, CardContent, CardHeader, Divider, Grid, TextField } from "@mui/material";
+import { removeCookies } from "cookies-next";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Grid,
-  TextField,
-} from "@mui/material";
+import updateProfile from "src/api/updateProfile";
 
 export const AccountProfileDetails = ({ user, ...props }) => {
   const [values, setValues] = useState({
-    name: user.name,
+    first_name: user.first_name,
+    last_name: user.last_name,
     email: user.email,
-    phone: user.phone,
-    street: user.address.street,
-    city: user.address.city,
+    phone_number: user.phone_number,
   });
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     setValues({
@@ -26,104 +22,85 @@ export const AccountProfileDetails = ({ user, ...props }) => {
     });
   };
 
+  const handleUpdate = async () => {
+    console.log("heleleo");
+    setLoading(true);
+    const data = await updateProfile({ ...user, ...values });
+    setLoading(false);
+
+    console.log(data);
+
+    if (data?.status === 401 || data?.status === 401) {
+      removeCookies("token");
+      router.push("/");
+    }
+  };
   return (
-    <form autoComplete="off" noValidate {...props}>
-      <Card>
-        <CardHeader subheader="The information can be edited" title="Profile" />
-        <Divider />
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                helperText="Please specify the name"
-                label="Name"
-                name="name"
-                onChange={handleChange}
-                required
-                value={values.name}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label="Email Address"
-                name="email"
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phone"
-                onChange={handleChange}
-                required
-                value={values.phone}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label="City"
-                name="city"
-                onChange={handleChange}
-                required
-                value={values.city}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              {/* <TextField
-                fullWidth
-                label="Select street"
-                name="street"
-                onChange={handleChange}
-                required
-                select
-                SelectProps={{ native: true }}
-                value={values.state}
-                variant="outlined"
-              >
-                {states.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField> */}
-              <TextField
-                fullWidth
-                label="Street"
-                name="street"
-                onChange={handleChange}
-                required
-                value={values.street}
-                variant="outlined"
-              />
-            </Grid>
+    <Card>
+      <CardHeader subheader="The information can be edited" title="Profile" />
+      <Divider />
+      <CardContent>
+        <Grid container spacing={3}>
+          <Grid item md={6} xs={12}>
+            <TextField
+              fullWidth
+              helperText="Please specify the name"
+              label="First Name"
+              name="first_name"
+              onChange={handleChange}
+              required
+              value={values.first_name}
+              variant="outlined"
+            />
           </Grid>
-        </CardContent>
-        <Divider />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            p: 2,
-          }}
-        >
-          <Button color="primary" variant="contained">
-            Save details
-          </Button>
-        </Box>
-      </Card>
-    </form>
+          <Grid item md={6} xs={12}>
+            <TextField
+              fullWidth
+              helperText="Please specify the name"
+              label="Lats Name"
+              name="last_name"
+              onChange={handleChange}
+              required
+              value={values.last_name}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <TextField
+              fullWidth
+              label="Email Address"
+              name="email"
+              onChange={handleChange}
+              required
+              value={values.email}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <TextField
+              fullWidth
+              label="Phone Number"
+              name="phone"
+              onChange={handleChange}
+              required
+              value={values.phone_number}
+              variant="outlined"
+            />
+          </Grid>
+        </Grid>
+      </CardContent>
+      <Divider />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          p: 2,
+        }}
+      >
+        <LoadingButton loading={loading} color="primary" variant="contained" onClick={handleUpdate}>
+          Save details
+        </LoadingButton>
+      </Box>
+    </Card>
   );
 };

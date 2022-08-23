@@ -13,6 +13,7 @@ import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
 import LocalTaxiIcon from "@mui/icons-material/LocalTaxi";
 import CollapseItem from "./collapse-item";
+import { AdminPanelSettings } from "@mui/icons-material";
 
 const items = [
   {
@@ -38,6 +39,11 @@ const items = [
         href: "/operators",
         icon: <UsersIcon fontSize="small" />,
         title: "Operators",
+      },
+      {
+        href: "/admins",
+        icon: <AdminPanelSettings fontSize="small" />,
+        title: "Admin",
       },
     ],
   },

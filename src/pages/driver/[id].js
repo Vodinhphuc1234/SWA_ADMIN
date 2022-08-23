@@ -1,17 +1,16 @@
 import { Box, Container, Divider, Grid, Typography } from "@mui/material";
 import Head from "next/head";
-import getAllUsers from "src/api/getAllUser";
-import { getUser } from "src/api/getUser";
+import getDriver from "src/api/driver/getDriver";
 import { AccountProfile } from "src/components/account/account-profile";
 import { AccountProfileDetails } from "src/components/account/account-profile-details";
 import { DashboardLayout } from "src/components/dashboard-layout";
-import { DriverIncome } from "src/components/report/driverIncome";
+import DriverIncome from "src/components/driver/driver-income";
 
 const DriverDetail = ({ driver }) => {
   return (
     <>
       <Head>
-        <title>Driver detail</title>
+        <title>Driver</title>
       </Head>
       <Box
         component="main"
@@ -34,9 +33,11 @@ const DriverDetail = ({ driver }) => {
                   <AccountProfileDetails user={driver} />
                 </Grid>
                 <Grid item lg={12} mt={10}>
-                  <DriverIncome />
+                  <Divider />
                 </Grid>
               </Grid>
+
+              <DriverIncome self={driver.self} />
             </>
           )}
           {!driver && (
@@ -54,30 +55,17 @@ const DriverDetail = ({ driver }) => {
 
 DriverDetail.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export const getStaticProps = async ({ params }) => {
-  const driver = await getUser({
-    params: {
-      id: params.id,
-    },
-  });
+export const getServerSideProps = async ({ req, res }) => {
+  const url = req.url;
+  console.log(url);
 
+  const driver = await getDriver(url.replace("driver", "admin/drivers"), { req, res });
+
+  console.log(driver);
   return {
-    props: { driver },
-  };
-};
-
-export const getStaticPaths = async () => {
-  const users = await getAllUsers();
-
-  let Paths = users.data.map((user) => ({
-    params: {
-      id: user.id.toString(),
+    props: {
+      driver,
     },
-  }));
-
-  return {
-    paths: [...Paths],
-    fallback: true,
   };
 };
 

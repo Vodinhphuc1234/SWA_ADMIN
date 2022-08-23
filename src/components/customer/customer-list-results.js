@@ -1,7 +1,4 @@
-import { useState } from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import PropTypes from "prop-types";
-import { format } from "date-fns";
+import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
   Box,
@@ -16,14 +13,17 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { getInitials } from "../../utils/get-initials";
-import Router from "next/router";
+import { removeCookies } from "cookies-next";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { useState } from "react";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import deleteUser from "src/api/deleteUser";
+import { getInitials } from "../../utils/get-initials";
 
-export const CustomerListResults = ({ customers, ...rest }) => {
+export const CustomerListResults = ({ customers, paging, setPaging, totalItem, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(5);
-  const [page, setPage] = useState(0);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -57,13 +57,29 @@ export const CustomerListResults = ({ customers, ...rest }) => {
     setSelectedCustomerIds(newSelectedCustomerIds);
   };
 
+  const { offset, limit } = paging;
+
   const handleLimitChange = (event) => {
-    setLimit(event.target.value);
+    console.log(event.target.value);
+    setPaging((prev) => ({ ...prev, limit: event.target.value }));
   };
 
   const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-    Router.push(`/customers?_page=${newPage + 1}&_limit=${limit}`);
+    setPaging((prev) => ({ ...prev, offset: newPage }));
+  };
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const handleDeleteUser = async (url) => {
+    setLoading(true);
+    const data = await deleteUser(url);
+    setLoading(false);
+    if (data?.status === 401 || data?.status === 403) {
+      removeCookies("token");
+      router.push("/");
+    } else {
+      router.reload();
+    }
   };
 
   return (
@@ -86,14 +102,14 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                 </TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Phone</TableCell>
+                <TableCell>Phone Number</TableCell>
                 <TableCell>Registration date</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {customers.map((customer) => (
                 <TableRow
                   hover
                   key={customer.id}
@@ -114,25 +130,34 @@ export const CustomerListResults = ({ customers, ...rest }) => {
                       }}
                     >
                       <Avatar src={customer.avatarUrl} sx={{ mr: 2 }}>
-                        {getInitials(customer.name)}
+                        {getInitials(customer.last_name)}
                       </Avatar>
                       <Typography color="textPrimary" variant="body1">
-                        {customer.name}
+                        {customer.first_name} {customer.last_name}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>{customer.email}</TableCell>
+                  <TableCell>{customer.phone_number}</TableCell>
+                  <TableCell>{customer.date_joined}</TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
-                  </TableCell>
-                  <TableCell>{customer.phone}</TableCell>
-                  <TableCell>{format(1200003333, "dd/MM/yyyy")}</TableCell>
-                  <TableCell>
-                    <Link href={`customer/${customer.id}`}>
+                    <Link href={customer.self.replace("admin/riders", "customer")}>
                       <Button variant="contained" color="primary">
                         Detail
                       </Button>
                     </Link>
+                  </TableCell>
+                  <TableCell>
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      color="error"
+                      onClick={async () => {
+                        await handleDeleteUser(customer.self);
+                      }}
+                    >
+                      Delete
+                    </LoadingButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -142,12 +167,12 @@ export const CustomerListResults = ({ customers, ...rest }) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={10}
+        count={totalItem}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
-        page={page}
+        page={offset}
         rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[5, 10, 15, 20, 25, 50]}
       />
     </Card>
   );

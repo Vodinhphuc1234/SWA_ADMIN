@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Box,
@@ -19,6 +19,7 @@ import { ArrowRight, Sort } from "@mui/icons-material";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import Link from "next/link";
+import getTripIncomeReport from "src/api/report/getTripIncomeReport";
 
 export const options = {
   responsive: true,
@@ -46,24 +47,6 @@ export const data = {
       borderColor: "rgb(100, 99, 100)",
       backgroundColor: "rgba(100, 99, 100, 0.5)",
     },
-    {
-      label: "Trip",
-      data: labels.map(() => Math.random()),
-      borderColor: "rgb(255, 99, 132)",
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "Driver",
-      data: labels.map(() => Math.random()),
-      borderColor: "rgb(236, 252, 22)",
-      backgroundColor: "rgba(236, 252, 22, 0.5)",
-    },
-    {
-      label: "Customer",
-      data: labels.map(() => Math.random()),
-      borderColor: "rgb(53, 162, 235)",
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
   ],
 };
 
@@ -72,6 +55,24 @@ export function StatisticChart(props) {
     new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
   );
   const [dateTo, setDateTo] = useState(new Date());
+
+  useEffect(() => {
+    const asyncFunc = async () => {
+      const data = await getTripIncomeReport({
+        params: {
+          offset: 0,
+          limit: 500,
+          date_start: dateFrom.getTime() / 1000,
+          date_end: dateTo.getTime() / 1000,
+        },
+      });
+
+      console.log(data);
+    };
+
+    asyncFunc();
+  }, [dateFrom, dateTo]);
+
   return (
     <Card {...props}>
       <CardHeader

@@ -3,7 +3,7 @@ import { Box, Container } from "@mui/material";
 import { DashboardLayout } from "src/components/dashboard-layout";
 import getAllUsers from "src/api/getAllUser";
 import { DriverListToolbar } from "src/components/driver/customer-list-toolbar";
-import { DriverListResults } from "src/components/driver/customer-list-results";
+import { DriverListResults } from "src/components/driver/driver-list-results";
 
 const Drivers = ({ drivers }) => (
   <>

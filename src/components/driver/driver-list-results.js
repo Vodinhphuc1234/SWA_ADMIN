@@ -1,30 +1,39 @@
-import { useState } from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import PropTypes from "prop-types";
-import { format } from "date-fns";
+import { ArrowRight, Sort } from "@mui/icons-material";
+import { DatePicker, LoadingButton, LocalizationProvider } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import {
   Avatar,
   Box,
   Button,
   Card,
+  CardContent,
+  CardHeader,
   Checkbox,
+  Divider,
+  FormControl,
+  Grid,
+  IconButton,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
-import { getInitials } from "../../utils/get-initials";
-import Router from "next/router";
+import { removeCookies } from "cookies-next";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import deleteUser from "src/api/deleteUser";
+import getTripIncomeReport from "src/api/report/getTripIncomeReport";
+import { getInitials } from "../../utils/get-initials";
 
-export const DriverListResults = ({ drivers, ...rest }) => {
+export const DriverListResults = ({ drivers, paging, setPaging, totalItem, ...rest }) => {
   const [selectedDriverIds, setSelectedDriverIds] = useState([]);
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(0);
 
   const handleSelectAll = (event) => {
     let newSelectedDriverIds;
@@ -58,23 +67,39 @@ export const DriverListResults = ({ drivers, ...rest }) => {
     setSelectedDriverIds(newSelectedDriverIds);
   };
 
+  const { offset, limit } = paging;
+
   const handleLimitChange = (event) => {
-    setLimit(event.target.value);
+    console.log(event.target.value);
+    setPaging((prev) => ({ ...prev, limit: event.target.value }));
   };
 
   const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-    Router.push(`/drivers?_page=${newPage + 1}&_limit=${limit}`);
+    setPaging((prev) => ({ ...prev, offset: newPage }));
+  };
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const handleDeleteUser = async (url) => {
+    setLoading(true);
+    const data = await deleteUser(url);
+    setLoading(false);
+    if (data?.status === 401 || data?.status === 403) {
+      removeCookies("token");
+      router.push("/");
+    } else {
+      router.reload();
+    }
   };
 
   return (
-    <Card {...rest}>
+    <>
       <PerfectScrollbar>
-        <TableContainer sx={{ maxHeight: 1000, minWidth: 1050 }}>
-          <Table stickyHeader aria-label="sticky table">
+        <Box sx={{ minWidth: 1050 }}>
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox" sx={{ backgroundColor: "lightgray" }}>
+                <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedDriverIds.length === drivers.length}
                     color="primary"
@@ -84,17 +109,17 @@ export const DriverListResults = ({ drivers, ...rest }) => {
                     onChange={handleSelectAll}
                   />
                 </TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Name</TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Email</TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Location</TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Phone</TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Registration date</TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Income</TableCell>
-                <TableCell sx={{ backgroundColor: "lightgray" }}>Action</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell>Registration date</TableCell>
+
+                <TableCell></TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {drivers.slice(0, limit).map((driver) => (
+              {drivers.map((driver) => (
                 <TableRow
                   hover
                   key={driver.id}
@@ -115,43 +140,52 @@ export const DriverListResults = ({ drivers, ...rest }) => {
                       }}
                     >
                       <Avatar src={driver.avatarUrl} sx={{ mr: 2 }}>
-                        {getInitials(driver.name)}
+                        {getInitials(driver.last_name)}
                       </Avatar>
                       <Typography color="textPrimary" variant="body1">
-                        {driver.name}
+                        {driver.first_name} {driver.last_name}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>{driver.email}</TableCell>
+                  <TableCell>{driver.phone_number}</TableCell>
+                  <TableCell>{driver.date_joined}</TableCell>
+
                   <TableCell>
-                    {`${driver.address.city}, ${driver.address.state}, ${driver.address.country}`}
-                  </TableCell>
-                  <TableCell>{driver.phone}</TableCell>
-                  <TableCell>{format(1200003333, "dd/MM/yyyy")}</TableCell>
-                  <TableCell>12.000.000</TableCell>
-                  <TableCell>
-                    <Link href={`/driver/${driver.id}`}>
+                    <Link href={driver.self.replace("admin/drivers", "driver")}>
                       <Button variant="contained" color="primary">
                         Detail
                       </Button>
                     </Link>
                   </TableCell>
+                  <TableCell>
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      color="error"
+                      onClick={async () => {
+                        await handleDeleteUser(driver.self);
+                      }}
+                    >
+                      Delete
+                    </LoadingButton>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </Box>
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={10}
+        count={totalItem}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleLimitChange}
-        page={page}
+        page={offset}
         rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[5, 10, 15, 20, 25, 50]}
       />
-    </Card>
+    </>
   );
 };
 

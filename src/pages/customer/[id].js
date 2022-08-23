@@ -1,7 +1,7 @@
 import { Box, Container, Divider, Grid, Typography } from "@mui/material";
 import Head from "next/head";
-import getAllUsers from "src/api/getAllUser";
-import { getUser } from "src/api/getUser";
+import getCustomer from "src/api/customer/getCustomer";
+import getListCustomer from "src/api/customer/getListCustomer";
 import { AccountProfile } from "src/components/account/account-profile";
 import { AccountProfileDetails } from "src/components/account/account-profile-details";
 import { DashboardLayout } from "src/components/dashboard-layout";
@@ -53,30 +53,17 @@ const CustomerDetail = ({ customer }) => {
 
 CustomerDetail.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export const getStaticProps = async ({ params }) => {
-  const customer = await getUser({
-    params: {
-      id: params.id,
-    },
-  });
+export const getServerSideProps = async ({ req, res }) => {
+  const url = req.url;
+  console.log(url);
 
+  const customer = await getCustomer(url.replace("customer", "admin/riders"), { req, res });
+
+  console.log(customer);
   return {
-    props: { customer },
-  };
-};
-
-export const getStaticPaths = async () => {
-  const users = await getAllUsers();
-
-  let Paths = users.data.map((user) => ({
-    params: {
-      id: user.id.toString(),
+    props: {
+      customer,
     },
-  }));
-
-  return {
-    paths: [...Paths],
-    fallback: true,
   };
 };
 
